@@ -10,16 +10,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// CryptoServiceServer implementa el servidor gRPC definido en cifratin.proto
+// CryptoServiceServer implements the gRPC CifratinServiceServer interface defined in the protobuf schema.
 type CryptoServiceServer struct {
 	v1.UnimplementedCifratinServiceServer
 }
 
+// NewCryptoServiceServer creates a new instance of CryptoServiceServer.
 func NewCryptoServiceServer() *CryptoServiceServer {
 	return &CryptoServiceServer{}
 }
 
-// EncryptFile cifra los datos recibidos mediante gRPC
+// EncryptFile encrypts the payload data received over gRPC using AES-256-GCM.
 func (s *CryptoServiceServer) EncryptFile(ctx context.Context, req *v1.FileRequest) (*v1.FileResponse, error) {
 	if len(req.Data) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "no data provided")
@@ -43,7 +44,7 @@ func (s *CryptoServiceServer) EncryptFile(ctx context.Context, req *v1.FileReque
 	}, nil
 }
 
-// DecryptFile descifra los datos recibidos mediante gRPC
+// DecryptFile decrypts the payload data received over gRPC using AES-256-GCM.
 func (s *CryptoServiceServer) DecryptFile(ctx context.Context, req *v1.FileRequest) (*v1.FileResponse, error) {
 	if len(req.Data) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "no data provided")

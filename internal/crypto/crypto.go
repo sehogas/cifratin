@@ -11,7 +11,10 @@ import (
 	"strings"
 )
 
-// ProcessData maneja el cifrado o descifrado de bytes crudos
+// ProcessData handles the encryption or decryption of raw byte slices using AES-256-GCM.
+// The key parameter must be a 32-byte cryptographically secure key.
+// The mode parameter must be either "encrypt" or "decrypt".
+// Returns the processed byte slice or an error if the block cipher could not be initialized or data is invalid.
 func ProcessData(datos []byte, key []byte, mode string) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -46,7 +49,11 @@ func ProcessData(datos []byte, key []byte, mode string) ([]byte, error) {
 	}
 }
 
-// ProcessFile lee, procesa y guarda un archivo
+// ProcessFile reads a file from inPath, processes its content (encryption or decryption)
+// using ProcessData, ensures the destination directory exists, and writes the output to outPath.
+// The key parameter must be a 32-byte AES key.
+// The mode parameter must be either "encrypt" or "decrypt".
+// Returns nil on success, or an wrapped error detailing the failure on read, process, or write stages.
 func ProcessFile(inPath string, outPath string, key []byte, mode string) error {
 	datos, err := os.ReadFile(inPath)
 	if err != nil {
@@ -78,7 +85,10 @@ func ProcessFile(inPath string, outPath string, key []byte, mode string) error {
 	return nil
 }
 
-// AdjustDestinationName agrega .enc al cifrar o quita .enc al descifrar
+// AdjustDestinationName modifies the output file name according to the action.
+// If mode is "encrypt" and baseDest does not end with ".enc", it appends ".enc".
+// If mode is "decrypt" and baseDest ends with ".enc", it removes the ".enc" suffix.
+// Otherwise, it returns baseDest unmodified.
 func AdjustDestinationName(baseDest string, mode string) string {
 	if mode == "encrypt" && !strings.HasSuffix(baseDest, ".enc") {
 		return baseDest + ".enc"

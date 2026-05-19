@@ -1,5 +1,11 @@
 # Cifratin 🔐
 
+[![Go Version](https://img.shields.io/github/go-mod/go-version/sehogas/cifratin?color=00ADD8&logo=go)](https://go.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sehogas/cifratin)](https://goreportcard.com/report/github.com/sehogas/cifratin)
+[![Security Policy](https://img.shields.io/badge/Security-Policy_Enabled-success?logo=github-security)](SECURITY.md)
+[![Latest Release](https://img.shields.io/github/v/release/sehogas/cifratin?logo=github)](https://github.com/sehogas/cifratin/releases)
+
 Una utilidad de línea de comandos (CLI) escrita en Go diseñada para cifrar y descifrar archivos de forma rápida y segura. Implementa criptografía simétrica moderna utilizando el estándar **AES-256-GCM** y proporciona una interfaz limpia para procesar archivos individuales, patrones de búsqueda o directorios enteros de forma recursiva.
 
 ---

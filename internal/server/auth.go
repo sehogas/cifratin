@@ -10,12 +10,12 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// AuthInterceptor maneja la validación de tokens de API Key para autorizar llamadas.
+// AuthInterceptor handles API Key token validation to authorize incoming gRPC calls.
 type AuthInterceptor struct {
 	validKeys map[string]bool
 }
 
-// NewAuthInterceptor inicializa el interceptor con una lista de API Keys autorizadas.
+// NewAuthInterceptor initializes the interceptor with a list of authorized API Keys.
 func NewAuthInterceptor(authorizedKeys []string) *AuthInterceptor {
 	keysMap := make(map[string]bool)
 	for _, key := range authorizedKeys {
@@ -26,7 +26,7 @@ func NewAuthInterceptor(authorizedKeys []string) *AuthInterceptor {
 	return &AuthInterceptor{validKeys: keysMap}
 }
 
-// Unary intercepta y valida llamadas gRPC unitarias.
+// Unary returns a gRPC UnaryServerInterceptor that validates incoming requests.
 func (a *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
