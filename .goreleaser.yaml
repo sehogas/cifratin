@@ -48,6 +48,32 @@ builds:
     ldflags:
       - -s -w -X main.Version={{.Version}}
 
+  - id: cifratin-http-server
+    binary: cifratin-http-server
+    main: ./cmd/cifratin-http-server
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
+  - id: cifratin-http-client
+    binary: cifratin-http-client
+    main: ./cmd/cifratin-http-client
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
 archives:
   - format: tar.gz
     # Usar zip para sistemas operativos Windows

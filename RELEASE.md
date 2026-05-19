@@ -1,6 +1,6 @@
 # 📦 Guía de Lanzamiento y Versionamiento de Cifratin
 
-Este documento detalla el procedimiento técnico para definir versiones y publicar nuevos lanzamientos (releases) de los binarios ejecutables de Cifratin (`cifratin`, `cifratin-client` y `cifratin-server`) en el repositorio.
+Este documento detalla el procedimiento técnico para definir versiones y publicar nuevos lanzamientos (releases) de los binarios ejecutables de Cifratin (`cifratin`, `cifratin-client`, `cifratin-server`, `cifratin-http-client` y `cifratin-http-server`) en el repositorio.
 
 ---
 
@@ -13,13 +13,15 @@ Cada punto de entrada de la aplicación define una variable global de paquete ll
 - `cmd/cifratin/main.go`
 - `cmd/cifratin-client/main.go`
 - `cmd/cifratin-server/main.go`
+- `cmd/cifratin-http-client/main.go`
+- `cmd/cifratin-http-server/main.go`
 
 ### 2. Inyección local (Desarrollo)
-Cuando se compila localmente de forma manual usando el `Makefile` (`make build`, `make build-client` o `make build-server`), se utiliza el flag `-X` para sobreescribir el valor de la variable en tiempo de enlace:
+Cuando se compila localmente de forma manual usando el `Makefile` (por ejemplo, `make build`, `make build-client`, `make build-server`, `make build-http-client` o `make build-http-server`), se utiliza el flag `-X` para sobreescribir el valor de la variable en tiempo de enlace:
 ```bash
 go build -ldflags "-s -w -X main.Version=local-dev" -o bin/cifratin ./cmd/cifratin
 ```
-Esto asegura que, durante el desarrollo local, al ejecutar `bin/cifratin -version` se muestre la leyenda `local-dev`.
+Esto asegura que, durante el desarrollo local, al ejecutar `bin/cifratin -version` o `bin/cifratin-http-server -version` se muestre la leyenda `local-dev`.
 
 ### 3. Inyección en Producción (CI/CD)
 Durante la ejecución del pipeline automatizado, **GoReleaser** inyecta de forma dinámica el número del Tag de Git correspondiente (ej. `v1.0.0`) reemplazando el valor `"dev"` de la variable `Version`.

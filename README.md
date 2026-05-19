@@ -105,6 +105,23 @@ bin/cifratin-client -mode=<encrypt|decrypt> -in=<source> -out=<destination> [add
 
 ---
 
+### 3. Remote Encryptor (HTTP Client)
+
+The HTTP client application replicates the same functionality using JSON payloads over HTTP REST calls, communicating with the standalone HTTP server.
+
+```bash
+bin/cifratin-http-client -mode=<encrypt|decrypt> -in=<source> -out=<destination> [additional flags]
+```
+
+#### Additional Flags for the HTTP Client:
+- `-addr`: Base URL of the HTTP server. Default is `http://localhost:8080`.
+- `-apikey`: API key to authenticate with the server. If not specified, it will attempt to read from the `CIFRATIN_API_KEY` environment variable, otherwise it will use the default key `"dev-key-123"`.
+
+> [!IMPORTANT]
+> For all versions (local, gRPC, and HTTP client), you will be prompted to enter the cryptographic password for the file interactively in the console.
+
+---
+
 ### Practical Execution Examples
 
 #### 1. Encrypt and Decrypt an Individual File (Local)
@@ -141,11 +158,23 @@ bin/cifratin-client -mode=encrypt -in=tests -out=encrypted_output_grpc
 bin/cifratin-client -mode=decrypt -in=encrypted_output_grpc -out=restored_output_grpc
 ```
 
+#### 4. Encrypt and Decrypt a Complete Directory (HTTP Client)
+
+Ensure the HTTP server is running (`make run-http-server`).
+
+```bash
+# Encrypt all contents of the 'tests' folder using the HTTP server
+bin/cifratin-http-client -mode=encrypt -in=tests -out=encrypted_output_http
+
+# Decrypt the encrypted content using the HTTP server
+bin/cifratin-http-client -mode=decrypt -in=encrypted_output_http -out=restored_output_http
+```
+
 ---
 
-## 🔒 Security in the gRPC Service
+## 🔒 Security in the gRPC and HTTP Services
 
-By default, exposing a gRPC service on a network can be vulnerable if you do not restrict who is allowed to invoke it. To mitigate this, the service implements an API-key-based authentication layer using a unary server interceptor (`UnaryServerInterceptor`).
+By default, exposing a gRPC or HTTP service on a network can be vulnerable if you do not restrict who is allowed to invoke it. To mitigate this, both services implement an API-key-based authentication layer (using a unary server interceptor in gRPC and an authentication middleware in HTTP).
 
 ### 1. Server Configuration
 Authorized keys are defined on the server using the `CIFRATIN_API_KEYS` environment variable, separated by commas:
@@ -153,23 +182,25 @@ Authorized keys are defined on the server using the `CIFRATIN_API_KEYS` environm
 ```bash
 # On Windows systems (PowerShell)
 $env:CIFRATIN_API_KEYS="my-service-a,my-service-b,api-gateway-key"
-make run-server
+make run-server # For gRPC
+make run-http-server # For HTTP
 
 # On Linux/macOS systems
 export CIFRATIN_API_KEYS="my-service-a,my-service-b,api-gateway-key"
-make run-server
+make run-server # For gRPC
+make run-http-server # For HTTP
 ```
 
 > [!NOTE]
-> If you start the server without setting this variable, the system will use a default key (`dev-key-123`) for development environments and issue a warning in the console.
+> If you start either server without setting this variable, the system will use a default key (`dev-key-123`) for development environments and issue a warning in the console.
 
 ### 2. Client Consumption
-For a client service to successfully invoke the `EncryptFile` and `DecryptFile` endpoints, it must attach a valid key to the metadata of the gRPC call. The interceptor validates either of the following headers:
+For a client service to successfully invoke the endpoints, it must attach a valid key in the request metadata (for gRPC) or HTTP headers (for REST). The servers validate either of the following headers:
 
 - **`x-api-key` header**: Must contain the raw token (e.g., `x-api-key: my-service-a`).
 - **`authorization` header**: Supports standard Bearer tokens (e.g., `authorization: Bearer my-service-a`) or the raw token value.
 
-Any call that lacks the header or provides an invalid key will be rejected at the interceptor level, returning the gRPC error codes `Unauthenticated` or `PermissionDenied` respectively.
+Any call that lacks the header or provides an invalid key will be rejected, returning the gRPC error codes `Unauthenticated`/`PermissionDenied` or HTTP status codes `401 Unauthorized`/`403 Forbidden` respectively.
 
 ---
 

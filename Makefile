@@ -15,9 +15,13 @@ CLIENT_BINARY_NAME=cifratin-client
 CLIENT_CMD_PATH=./cmd/cifratin-client
 SERVER_BINARY_NAME=cifratin-server
 SERVER_CMD_PATH=./cmd/cifratin-server
+HTTP_SERVER_BINARY_NAME=cifratin-http-server
+HTTP_SERVER_CMD_PATH=./cmd/cifratin-http-server
+HTTP_CLIENT_BINARY_NAME=cifratin-http-client
+HTTP_CLIENT_CMD_PATH=./cmd/cifratin-http-client
 VERSION_LDFLAGS=-ldflags "-s -w -X main.Version=local-dev"
 
-.PHONY: help build clean test test-coverage run-cifrar-archivo run-descifrar-archivo run-cifrar-carpeta run-descifrar-carpeta run-cifrar-patron help-app
+.PHONY: help build clean test test-coverage run-cifrar-archivo run-descifrar-archivo run-cifrar-carpeta run-descifrar-carpeta run-cifrar-patron help-app build-server build-client build-http-server build-http-client run-server run-http-server
 
 # Objetivo por defecto: muestra la ayuda general
 help:
@@ -28,6 +32,8 @@ help:
 	@echo "   make build                   - Compila el binario CLI en la carpeta $(BUILD_DIR)"
 	@echo "   make build-client            - Compila el binario Cliente gRPC en la carpeta $(BUILD_DIR)"
 	@echo "   make build-server            - Compila el binario del servidor gRPC"
+	@echo "   make build-http-client       - Compila el binario Cliente HTTP en la carpeta $(BUILD_DIR)"
+	@echo "   make build-http-server       - Compila el binario del servidor HTTP"
 	@echo "   make clean                   - Elimina binarios y archivos temporales"
 	@echo "   make test                    - Ejecuta todas las pruebas unitarias y de integracion"
 	@echo "   make test-coverage           - Ejecuta las pruebas y muestra el reporte de cobertura"
@@ -38,6 +44,8 @@ help:
 	@echo "   make run-cifrar-carpeta      - Cifra el contenido de una carpeta de ejemplo (tests/)"
 	@echo "   make run-descifrar-carpeta   - Descifra el contenido de la carpeta cifrada"
 	@echo "   make run-cifrar-patron       - Cifra archivos usando un patron de busqueda (ej: tests/*.pdf)"
+	@echo "   make run-server              - Inicia el servidor gRPC"
+	@echo "   make run-http-server         - Inicia el servidor HTTP"
 	@echo "   make help-app                - Muestra las instrucciones de uso nativas del CLI de Cifratin"
 	@echo "======================================================================"
 
@@ -59,6 +67,16 @@ build-client:
 	@echo "==> Compilando el binario Cliente gRPC $(CLIENT_BINARY_NAME)..."
 	go build $(VERSION_LDFLAGS) -o $(BUILD_DIR)/$(CLIENT_BINARY_NAME) $(CLIENT_CMD_PATH)
 	@echo "==> Compilacion exitosa. Binario disponible en $(BUILD_DIR)/$(CLIENT_BINARY_NAME)"
+
+build-http-server:
+	@echo "==> Compilando el binario del servidor HTTP $(HTTP_SERVER_BINARY_NAME)..."
+	go build $(VERSION_LDFLAGS) -o $(BUILD_DIR)/$(HTTP_SERVER_BINARY_NAME) $(HTTP_SERVER_CMD_PATH)
+	@echo "==> Compilacion exitosa. Binario disponible en $(BUILD_DIR)/$(HTTP_SERVER_BINARY_NAME)"
+
+build-http-client:
+	@echo "==> Compilando el binario Cliente HTTP $(HTTP_CLIENT_BINARY_NAME)..."
+	go build $(VERSION_LDFLAGS) -o $(BUILD_DIR)/$(HTTP_CLIENT_BINARY_NAME) $(HTTP_CLIENT_CMD_PATH)
+	@echo "==> Compilacion exitosa. Binario disponible en $(BUILD_DIR)/$(HTTP_CLIENT_BINARY_NAME)"
 
 clean:
 	@echo "==> Limpiando archivos generados y temporales..."
@@ -121,3 +139,7 @@ help-app:
 run-server:
 	@echo "==> Levantando servidor gRPC..."
 	go run $(SERVER_CMD_PATH)
+
+run-http-server:
+	@echo "==> Levantando servidor HTTP..."
+	go run $(HTTP_SERVER_CMD_PATH)
