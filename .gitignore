@@ -8,8 +8,8 @@
 /bin/*
 !/bin/.gitkeep
 /dist/
-cifratin
-cifratin.exe
+/cifratin
+/cifratin.exe
 *.exe
 *.dll
 *.so
