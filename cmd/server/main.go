@@ -14,9 +14,17 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+var Version = "dev"
+
 func main() {
+	versionFlag := flag.Bool("version", false, "Print the server version")
 	port := flag.Int("port", 50051, "Port to listen for gRPC requests")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("Cifratin gRPC Server version: %s\n", Version)
+		return
+	}
 
 	// Obtener claves de API autorizadas desde variables de entorno
 	var keys []string

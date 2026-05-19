@@ -1,0 +1,64 @@
+# ==============================================================================
+# Configuración de GoReleaser para Cifratin
+# ==============================================================================
+version: 2
+project_name: cifratin
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: cifratin-cli
+    binary: cifratin
+    main: ./cmd/cifratin
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
+  - id: cifratin-client
+    binary: cifratin-client
+    main: ./cmd/cifratin-client
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
+  - id: cifratin-server
+    binary: server
+    main: ./cmd/server
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.Version={{.Version}}
+
+archives:
+  - format: tar.gz
+    # Usar zip para sistemas operativos Windows
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

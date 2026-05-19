@@ -62,13 +62,21 @@ func processRemoteFile(ctx context.Context, client v1.CifratinServiceClient, inP
 	return nil
 }
 
+var Version = "dev"
+
 func main() {
+	versionFlag := flag.Bool("version", false, "Print the application version")
 	mode := flag.String("mode", "", "Action: 'encrypt' or 'decrypt'")
 	inPath := flag.String("in", "", "Single file, search pattern (e.g. '*.pdf') or source directory")
 	outPath := flag.String("out", "", "Destination file or destination directory")
 	addr := flag.String("addr", "localhost:50051", "gRPC server address")
 	apiKeyFlag := flag.String("apikey", "", "API key to authenticate with the gRPC server")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("Cifratin gRPC Client version: %s\n", Version)
+		return
+	}
 
 	if *mode != "encrypt" && *mode != "decrypt" {
 		fmt.Println("Error: You must specify -mode=encrypt or -mode=decrypt")
