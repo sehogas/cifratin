@@ -6,247 +6,215 @@
 [![Security Policy](https://img.shields.io/badge/Security-Policy_Enabled-success?logo=github-security)](SECURITY.md)
 [![Latest Release](https://img.shields.io/github/v/release/sehogas/cifratin?logo=github)](https://github.com/sehogas/cifratin/releases)
 
-Una utilidad de línea de comandos (CLI) escrita en Go diseñada para cifrar y descifrar archivos de forma rápida y segura. Implementa criptografía simétrica moderna utilizando el estándar **AES-256-GCM** y proporciona una interfaz limpia para procesar archivos individuales, patrones de búsqueda o directorios enteros de forma recursiva.
+A command-line utility (CLI) written in Go designed to encrypt and decrypt files quickly and securely. It implements modern symmetric cryptography using the **AES-256-GCM** standard and provides a clean interface for processing individual files, search patterns (globbing), or entire directories recursively.
 
 ---
 
-## 🛠️ Alcance y Características
+## 🛠️ Scope and Features
 
-El proyecto ha sido diseñado bajo los principios de simplicidad y solidez, asegurando que la gestión de datos confidenciales se realice de forma segura a nivel local.
+The project has been designed under the principles of simplicity and robustness, ensuring that confidential data management is performed securely at a local level.
 
-- **Criptografía Robusta**: 
-  - **Cifrado Simétrico**: Utiliza **AES-256** en modo **GCM** (Galois/Counter Mode). Este modo proporciona cifrado autenticado, lo que significa que garantiza tanto la **confidencialidad** como la **integridad** de los datos cifrados (detecta si el archivo ha sido alterado).
-  - **Derivación de Clave**: Las contraseñas ingresadas por el usuario se procesan mediante **SHA-256** para derivar de forma consistente una clave simétrica de 32 bytes (256 bits), sin importar la longitud de la contraseña original.
-- **Entrada Segura de Contraseñas**: La clave de seguridad se lee a través del terminal de forma interactiva usando `golang.org/x/term`, ocultando los caracteres ingresados (sin eco en pantalla) para evitar ataques de hombro (*shoulder surfing*).
-- **Flexibilidad de Entrada**:
-  - **Archivo Único**: Cifra o descifra un archivo individual especificando sus rutas.
-  - **Patrones de Búsqueda (Wildcards)**: Permite utilizar expresiones como `*.pdf` o `tests/*.txt` para procesar múltiples archivos coincidentes en lote.
-  - **Directorios (Procesamiento Recursivo)**: Recorre estructuras de carpetas completas y procesa cada archivo de forma individual, replicando la estructura de directorios en el destino correspondiente.
-- **Servicio gRPC Integrado**: Incluye un servidor gRPC (`cmd/cifratin-server`) independiente del CLI para permitir la integración y ejecución del motor de cifrado AES desde clientes remotos o microservicios.
-- **Manejo Inteligente de Extensiones**:
-  - Agrega automáticamente la extensión `.enc` al cifrar archivos si no la poseen.
-  - Remueve la extensión `.enc` al descifrar si se encuentra presente en el nombre del archivo origen.
-- **Creación de Directorios**: Si el directorio destino de salida no existe en el sistema, la aplicación lo crea de forma automática antes de proceder con la escritura de los archivos.
+- **Robust Cryptography**:
+  - **Symmetric Encryption**: Uses **AES-256** in **GCM** (Galois/Counter Mode). This mode provides authenticated encryption, guaranteeing both **confidentiality** and **integrity** of the encrypted data (detecting if the file has been altered).
+  - **Key Derivation**: User passwords are processed using **SHA-256** to consistently derive a 32-byte (256-bit) symmetric key, regardless of the original password's length.
+- **Secure Password Input**: The security key is read interactively through the terminal using `golang.org/x/term`, hiding entered characters (no echo on screen) to prevent shoulder surfing attacks.
+- **Input Flexibility**:
+  - **Single File**: Encrypt or decrypt an individual file by specifying its paths.
+  - **Search Patterns (Wildcards)**: Allows using expressions like `*.pdf` or `tests/*.txt` to batch process multiple matching files.
+  - **Directories (Recursive Processing)**: Traverses entire folder structures and processes each file individually, replicating the directory structure at the target destination.
+- **Integrated gRPC Service**: Includes a standalone gRPC server (`cmd/cifratin-server`) separate from the CLI to allow integration and execution of the AES encryption engine from remote clients or microservices.
+- **Smart Extension Handling**:
+  - Automatically appends the `.enc` extension when encrypting files if they do not already have it.
+  - Removes the `.enc` extension when decrypting if it is present in the source file name.
+- **Directory Creation**: If the destination output directory does not exist on the system, the application automatically creates it before proceeding with the file write operations.
 
 ---
 
-## 🏗️ Requisitos Previos
+## 🏗️ Prerequisites
 
-Para compilar y ejecutar Cifratin en su máquina local, necesitará tener instalado:
+To compile and run Cifratin on your local machine, you will need to have installed:
 
-- **Go**: Versión `1.25.1` o superior (según la definición del módulo en [go.mod](go.mod)).
-- **Make**: Herramienta de automatización (opcional, pero altamente recomendada para ejecutar tareas del proyecto de forma simplificada).
+- **Go**: Version `1.25.1` or higher (as defined in the module [go.mod](go.mod)).
+- **Make**: Automation tool (optional, but highly recommended to run project tasks easily).
 
 > [!NOTE]
-> **Modificaciones en la definición gRPC**: Si planea modificar los archivos `.proto` (dentro de `api/proto/v1/`), requerirá tener instalado en su sistema el compilador de Protocol Buffers (`protoc`) junto con los plugins de Go para la generación de código:
-> - `protoc-gen-go` (instalable con `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`)
-> - `protoc-gen-go-grpc` (instalable con `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`)
+> **Modifications to the gRPC definition**: If you plan to modify the `.proto` files (inside `api/proto/v1/`), you will need the Protocol Buffers compiler (`protoc`) installed on your system along with the Go code generation plugins:
+> - `protoc-gen-go` (installable via `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`)
+> - `protoc-gen-go-grpc` (installable via `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`)
 >
-> Los archivos Go ya generados (`.pb.go`) se encuentran versionados en el repositorio, por lo que no es obligatorio instalar estas herramientas a menos que modifique la API del protocolo.
+> The already generated Go files (`.pb.go`) are versioned in the repository, so installing these tools is not mandatory unless you modify the protocol API.
 
 ---
 
-## 🚀 Instalación y Compilación
+## 🚀 Installation and Compilation
 
-Para compilar el proyecto y generar el binario ejecutable, siga estos pasos:
+To compile the project and generate the executable binaries, follow these steps:
 
-# Compilar el binario ejecutable CLI
+```bash
+# Compile the CLI executable binary
 make build
 
-# Compilar el cliente gRPC
+# Compile the gRPC client binary
 make build-client
 
-# Compilar el servidor gRPC
+# Compile the gRPC server binary
 make build-server
 ```
-El binario CLI resultante se guardará en `bin/cifratin`, el cliente en `bin/cifratin-client` y el servidor en `bin/cifratin-server` (o `.exe` en entornos Windows).
+The resulting CLI binary will be saved in `bin/cifratin`, the client in `bin/cifratin-client`, and the server in `bin/cifratin-server` (or with `.exe` in Windows environments).
 
-### Usando Go directamente
+### Using Go directly
 ```bash
 go build -o bin/cifratin ./cmd/cifratin
 go build -o bin/cifratin-client ./cmd/cifratin-client
 go build -o bin/cifratin-server ./cmd/cifratin-server
 ```
 
-Si desea limpiar los archivos compilados y los resultados de las pruebas:
+If you want to clean up built files and test results:
 ```bash
 make clean
 ```
 
 ---
 
-## 📖 Instrucciones de Uso
+## 📖 Usage Instructions
 
-### 1. Cifrador Local (CLI Tradicional)
+### 1. Local Encryptor (Traditional CLI)
 
-La aplicación CLI local recibe flags para parametrizar su comportamiento:
+The local CLI application accepts flags to parameterize its behavior:
 
 ```bash
-bin/cifratin -mode=<encrypt|decrypt> -in=<origen> -out=<destino>
+bin/cifratin -mode=<encrypt|decrypt> -in=<source> -out=<destination>
 ```
 
 ---
 
-### 2. Cifrador Remoto (Cliente gRPC)
+### 2. Remote Encryptor (gRPC Client)
 
-La aplicación cliente gRPC replica la misma funcionalidad del CLI local, pero realiza las tareas criptográficas llamando remotamente al servidor gRPC.
+The gRPC client application replicates the same functionality as the local CLI but performs cryptographic tasks by calling the gRPC server remotely.
 
 ```bash
-bin/cifratin-client -mode=<encrypt|decrypt> -in=<origen> -out=<destino> [flags adicionales]
+bin/cifratin-client -mode=<encrypt|decrypt> -in=<source> -out=<destination> [additional flags]
 ```
 
-#### Flags Adicionales para el Cliente gRPC:
-- `-addr`: Dirección IP y puerto del servidor gRPC. Por defecto es `localhost:50051`.
-- `-apikey`: Clave de API para autenticarse con el servidor. Si no se especifica, intentará leer de la variable de entorno `CIFRATIN_API_KEY`, de lo contrario utilizará la clave por defecto `"dev-key-123"`.
+#### Additional Flags for the gRPC Client:
+- `-addr`: IP address and port of the gRPC server. Default is `localhost:50051`.
+- `-apikey`: API key to authenticate with the server. If not specified, it will attempt to read from the `CIFRATIN_API_KEY` environment variable, otherwise it will use the default key `"dev-key-123"`.
 
 > [!IMPORTANT]
-> Tanto para la versión local como para la cliente gRPC, se le solicitará que ingrese la clave criptográfica para el archivo de forma interactiva en la consola.
+> For both the local and gRPC client versions, you will be prompted to enter the cryptographic password for the file interactively in the console.
 
 ---
 
-### Ejemplos Prácticos de Ejecución
+### Practical Execution Examples
 
-#### 1. Cifrado y Descifrado de un Archivo Individual (Local)
+#### 1. Encrypt and Decrypt an Individual File (Local)
 
 ```bash
-# Cifrar un archivo PDF individual
+# Encrypt an individual PDF file
 bin/cifratin -mode=encrypt -in=test.pdf -out=test.pdf.enc
 
-# Descifrar el archivo cifrado anteriormente
-bin/cifratin -mode=decrypt -in=test.pdf.enc -out=test_restaurado.pdf
+# Decrypt the previously encrypted file
+bin/cifratin -mode=decrypt -in=test.pdf.enc -out=test_restored.pdf
 ```
 
-#### 2. Cifrado y Descifrado de un Archivo Individual (Cliente gRPC)
+#### 2. Encrypt and Decrypt an Individual File (gRPC Client)
 
-Asegúrese de tener el servidor gRPC encendido (`make run-server`).
+Ensure the gRPC server is running (`make run-server`).
 
 ```bash
-# Cifrar un archivo PDF individual enviándolo al servidor gRPC
+# Encrypt an individual PDF file by sending it to the gRPC server
 bin/cifratin-client -mode=encrypt -in=test.pdf -out=test.pdf.enc
 
-# Descifrar el archivo cifrado anteriormente a través de gRPC
-bin/cifratin-client -mode=decrypt -in=test.pdf.enc -out=test_restaurado_grpc.pdf
+# Decrypt the previously encrypted file via gRPC
+bin/cifratin-client -mode=decrypt -in=test.pdf.enc -out=test_restored_grpc.pdf
 ```
 
-#### 3. Cifrado y Descifrado de un Directorio Completo (Cliente gRPC)
+#### 3. Encrypt and Decrypt a Complete Directory (gRPC Client)
 
-El modo directorio en el cliente gRPC también mantiene la estructura recursiva interna de las carpetas.
+The directory mode in the gRPC client also preserves the internal recursive folder structure.
 
 ```bash
-# Cifrar todo el contenido de la carpeta 'tests' hacia 'salida_cifrada_grpc'
-bin/cifratin-client -mode=encrypt -in=tests -out=salida_cifrada_grpc
+# Encrypt all contents of the 'tests' folder to 'encrypted_output_grpc'
+bin/cifratin-client -mode=encrypt -in=tests -out=encrypted_output_grpc
 
-# Descifrar el contenido cifrado hacia 'salida_restaurada_grpc'
-bin/cifratin-client -mode=decrypt -in=salida_cifrada_grpc -out=salida_restaurada_grpc
+# Decrypt the encrypted content to 'restored_output_grpc'
+bin/cifratin-client -mode=decrypt -in=encrypted_output_grpc -out=restored_output_grpc
 ```
 
 ---
 
-## 🔒 Seguridad en el Servicio gRPC
+## 🔒 Security in the gRPC Service
 
-Por defecto, la exposición de un servicio gRPC en una red puede ser vulnerable si no se restringe quién tiene permiso para invocarlo. Para mitigar esto, el servicio implementa una capa de autenticación basada en **API Keys** mediante un interceptor unitario (`UnaryServerInterceptor`).
+By default, exposing a gRPC service on a network can be vulnerable if you do not restrict who is allowed to invoke it. To mitigate this, the service implements an API-key-based authentication layer using a unary server interceptor (`UnaryServerInterceptor`).
 
-### 1. Configuración del Servidor
-Las claves válidas autorizadas se definen en el servidor a través de la variable de entorno `CIFRATIN_API_KEYS`, separadas por comas:
+### 1. Server Configuration
+Authorized keys are defined on the server using the `CIFRATIN_API_KEYS` environment variable, separated by commas:
 
 ```bash
-# En sistemas Windows (PowerShell)
-$env:CIFRATIN_API_KEYS="mi-servicio-a,mi-servicio-b,api-gateway-key"
+# On Windows systems (PowerShell)
+$env:CIFRATIN_API_KEYS="my-service-a,my-service-b,api-gateway-key"
 make run-server
 
-# En sistemas Linux/macOS
-export CIFRATIN_API_KEYS="mi-servicio-a,mi-servicio-b,api-gateway-key"
+# On Linux/macOS systems
+export CIFRATIN_API_KEYS="my-service-a,my-service-b,api-gateway-key"
 make run-server
 ```
 
 > [!NOTE]
-> Si arranca el servidor sin establecer esta variable, el sistema utilizará una clave por defecto (`dev-key-123`) para entornos de desarrollo y emitirá una advertencia en la consola.
+> If you start the server without setting this variable, the system will use a default key (`dev-key-123`) for development environments and issue a warning in the console.
 
-### 2. Consumo desde los Clientes
-Para que un servicio cliente pueda consumir con éxito los endpoints `EncryptFile` y `DecryptFile`, deberá adjuntar una clave válida en los metadatos de la llamada gRPC. El interceptor valida cualquiera de los siguientes dos encabezados:
+### 2. Client Consumption
+For a client service to successfully invoke the `EncryptFile` and `DecryptFile` endpoints, it must attach a valid key to the metadata of the gRPC call. The interceptor validates either of the following headers:
 
-- **Cabecera `x-api-key`**: Debe contener el token crudo (ej: `x-api-key: mi-servicio-a`).
-- **Cabecera `authorization`**: Soporta tokens portadores estándar (ej: `authorization: Bearer mi-servicio-a`) o el valor crudo.
+- **`x-api-key` header**: Must contain the raw token (e.g., `x-api-key: my-service-a`).
+- **`authorization` header**: Supports standard Bearer tokens (e.g., `authorization: Bearer my-service-a`) or the raw token value.
 
-Cualquier llamada que carezca del encabezado o provea una clave inválida será rechazada a nivel de interceptor devolviendo los códigos de error gRPC `Unauthenticated` o `PermissionDenied` respectivamente.
-
----
-
-### Ejemplos Prácticos de Ejecución
-
-#### 1. Cifrado y Descifrado de un Archivo Individual
-
-```bash
-# Cifrar un archivo PDF individual
-bin/cifratin -mode=encrypt -in=test.pdf -out=test.pdf.enc
-
-# Descifrar el archivo cifrado anteriormente
-bin/cifratin -mode=decrypt -in=test.pdf.enc -out=test_restaurado.pdf
-```
-
-#### 2. Cifrado y Descifrado de un Directorio Completo (Recursivo)
-
-El modo directorio mantendrá la estructura interna de las carpetas al realizar la operación.
-
-```bash
-# Cifrar todo el contenido de la carpeta 'tests' hacia 'salida_cifrada'
-bin/cifratin -mode=encrypt -in=tests -out=salida_cifrada
-
-# Descifrar el contenido cifrado hacia 'salida_restaurada'
-bin/cifratin -mode=decrypt -in=salida_cifrada -out=salida_restaurada
-```
-
-#### 3. Cifrado y Descifrado por Patrones (Globbing)
-
-```bash
-# Cifrar todos los archivos PDF dentro de la carpeta 'tests'
-bin/cifratin -mode=encrypt -in="tests/*.pdf" -out=salida_patron
-```
+Any call that lacks the header or provides an invalid key will be rejected at the interceptor level, returning the gRPC error codes `Unauthenticated` or `PermissionDenied` respectively.
 
 ---
 
-## 🛠️ Automatización del Desarrollo (Makefile)
+## 🛠️ Development Automation (Makefile)
 
-El proyecto incluye un `Makefile` con comandos predefinidos para agilizar las tareas comunes de desarrollo y demostración:
+The project includes a `Makefile` with predefined commands to streamline common development and demonstration tasks:
 
-| Comando | Descripción |
+| Command | Description |
 | :--- | :--- |
-| `make help` | Muestra el menú de ayuda del Makefile con todas las opciones disponibles. |
-| `make build` | Compila el código del CLI y genera el binario en la carpeta `bin/`. |
-| `make build-server`| Compila el servidor gRPC y genera su ejecutable en `bin/`. |
-| `make clean` | Elimina binarios compilados, coberturas y salidas temporales generadas. |
-| `make test` | Corre las pruebas unitarias y de integración mostrando la salida en consola. |
-| `make test-coverage` | Ejecuta las pruebas y calcula la cobertura del código. |
-| `make run-cifrar-archivo` | Ejecuta una demostración de cifrado usando el archivo `test.pdf`. |
-| `make run-descifrar-archivo`| Ejecuta una demostración de descifrado del archivo cifrado en la tarea anterior. |
-| `make run-cifrar-carpeta` | Demostración práctica de cifrado recursivo de la carpeta `tests/`. |
-| `make run-descifrar-carpeta`| Descifra la carpeta procesada recursivamente de regreso a texto plano. |
-| `make run-cifrar-patron` | Demostración práctica de cifrado usando patrones de búsqueda de archivos. |
-| `make run-server` | Inicia el servidor gRPC en el puerto 50051 (habilitado con reflection). |
-| `make help-app` | Muestra las instrucciones de uso nativas del CLI impresas por Go. |
+| `make help` | Displays the Makefile help menu with all available options. |
+| `make build` | Compiles the CLI code and generates the binary in the `bin/` folder. |
+| `make build-server`| Compiles the gRPC server and generates its executable in `bin/`. |
+| `make clean` | Removes compiled binaries, coverage files, and temporary outputs. |
+| `make test` | Runs unit and integration tests, displaying the output in the console. |
+| `make test-coverage` | Runs tests and calculates code coverage. |
+| `make run-cifrar-archivo` | Runs an encryption demonstration using the `test.pdf` file. |
+| `make run-descifrar-archivo`| Runs a decryption demonstration of the file encrypted in the previous task. |
+| `make run-cifrar-carpeta` | Practical demonstration of recursive folder encryption of `tests/`. |
+| `make run-descifrar-carpeta`| Decrypts the recursively processed folder back into plain text. |
+| `make run-cifrar-patron` | Practical demonstration of encryption using file search patterns. |
+| `make run-server` | Starts the gRPC server on port 50051 (enabled with reflection). |
+| `make help-app` | Shows the native CLI usage instructions printed by Go. |
 
 ---
 
-## 🧪 Pruebas y Cobertura de Código
+## 🧪 Testing and Code Coverage
 
-El proyecto contiene un conjunto completo de pruebas unitarias y de integración que cubren los flujos de éxito y error principales, tales como:
-- Ajustes automáticos de nombres de archivo de destino.
-- Cifrado exitoso de datos individuales.
-- Descifrado correcto utilizando la contraseña de origen.
-- Manejo de fallos por claves incorrectas (verificación de integridad de AES-GCM).
-- Manejo de archivos corruptos o incompletos.
-- Comportamientos ante parámetros inválidos o rutas inexistentes.
+The project contains a comprehensive suite of unit and integration tests covering the main success and error flows, such as:
+- Automatic target file name adjustments.
+- Successful encryption of individual data.
+- Correct decryption using the original password.
+- Handling failures due to incorrect keys (AES-GCM integrity checks).
+- Handling corrupt or incomplete files.
+- Behavior with invalid parameters or non-existent paths.
 
-### Ejecución de Pruebas:
+### Running Tests:
 ```bash
 make test
 ```
 
-### Cálculo de Cobertura:
+### Coverage Calculation:
 ```bash
 make test-coverage
 ```
-Si desea examinar qué líneas de código específicas están cubiertas por las pruebas, puede generar y visualizar el informe HTML con:
+If you wish to examine which specific lines of code are covered by the tests, you can generate and view the HTML report with:
 ```bash
 go tool cover -html=coverage.out
 ```
