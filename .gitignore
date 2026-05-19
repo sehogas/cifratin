@@ -1,0 +1,51 @@
+# ==============================================================================
+# .gitignore de Cifratin
+# ==============================================================================
+# Archivo de exclusión de Git configurado para proyectos Go y entornos Windows/Linux.
+# Mantiene el repositorio limpio de binarios, dependencias locales y archivos temporales.
+
+# 1. Binarios y artefactos de compilación
+/bin/*
+!/bin/.gitkeep
+/dist/
+cifratin
+cifratin.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 2. Archivos temporales y salidas de pruebas
+*.enc
+/test_output/
+/tmp/
+/temp/
+*.log
+*.out
+coverage.out
+
+# 3. Archivos del sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 4. Entornos de desarrollo y editores (IDEs)
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-workspace
+*.sublime-project
+
+*.enc
+
+# 5. Tooling y compiladores externos (específicos de plataforma)
+/protoc/
+protoc.zip

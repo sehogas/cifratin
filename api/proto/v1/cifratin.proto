@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package cifratin.v1;
+
+option go_package = "github.com/sehogas/cifratin/pkg/api/v1;v1";
+
+// CifratinService provee métodos gRPC para cifrar y descifrar archivos.
+service CifratinService {
+  // EncryptFile cifra un archivo.
+  rpc EncryptFile (FileRequest) returns (FileResponse);
+  
+  // DecryptFile descifra un archivo.
+  rpc DecryptFile (FileRequest) returns (FileResponse);
+}
+
+// FileRequest representa una petición para cifrar o descifrar.
+message FileRequest {
+  // Datos crudos a procesar.
+  bytes data = 1;
+  // Contraseña a partir de la cual se derivará la clave criptográfica.
+  string password = 2;
+}
+
+// FileResponse representa el resultado del cifrado o descifrado.
+message FileResponse {
+  // Datos procesados resultantes.
+  bytes processed_data = 1;
+  // Mensaje de estado.
+  string message = 2;
+}
