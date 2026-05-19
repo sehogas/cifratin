@@ -22,9 +22,9 @@ builds:
     ldflags:
       - -s -w -X main.Version={{.Version}}
 
-  - id: cifratin-client
-    binary: cifratin-client
-    main: ./cmd/cifratin-client
+  - id: cifratin-grpc-client
+    binary: cifratin-grpc-client
+    main: ./cmd/cifratin-grpc-client
     goos:
       - linux
       - windows
@@ -35,9 +35,9 @@ builds:
     ldflags:
       - -s -w -X main.Version={{.Version}}
 
-  - id: cifratin-server
-    binary: cifratin-server
-    main: ./cmd/cifratin-server
+  - id: cifratin-grpc-server
+    binary: cifratin-grpc-server
+    main: ./cmd/cifratin-grpc-server
     goos:
       - linux
       - windows

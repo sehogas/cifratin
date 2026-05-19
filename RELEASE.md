@@ -1,6 +1,6 @@
 # 📦 Guía de Lanzamiento y Versionamiento de Cifratin
 
-Este documento detalla el procedimiento técnico para definir versiones y publicar nuevos lanzamientos (releases) de los binarios ejecutables de Cifratin (`cifratin`, `cifratin-client`, `cifratin-server`, `cifratin-http-client` y `cifratin-http-server`) en el repositorio.
+Este documento detalla el procedimiento técnico para definir versiones y publicar nuevos lanzamientos (releases) de los binarios ejecutables de Cifratin (`cifratin`, `cifratin-grpc-client`, `cifratin-grpc-server`, `cifratin-http-client` y `cifratin-http-server`) en el repositorio.
 
 ---
 
@@ -11,8 +11,8 @@ Para evitar mantener valores estáticos (hardcodeados) en el código Go que deba
 ### 1. Variables de Versión en el Código
 Cada punto de entrada de la aplicación define una variable global de paquete llamada `Version` inicializada por defecto con el valor `"dev"`:
 - `cmd/cifratin/main.go`
-- `cmd/cifratin-client/main.go`
-- `cmd/cifratin-server/main.go`
+- `cmd/cifratin-grpc-client/main.go`
+- `cmd/cifratin-grpc-server/main.go`
 - `cmd/cifratin-http-client/main.go`
 - `cmd/cifratin-http-server/main.go`
 
@@ -65,7 +65,7 @@ Una vez que GitHub recibe el tag que cumple con el patrón `v*`, se dispara auto
 
 ### ¿Qué hace el Pipeline automatizado?
 1. **Configura el entorno de construcción:** Levanta un ejecutor virtual Linux e instala el SDK de Go estable.
-2. **Construcción Multiplataforma paralela:** GoReleaser compila de forma nativa los tres ejecutables (`cifratin`, `cifratin-client` y `cifratin-server`) para los siguientes destinos:
+2. **Construcción Multiplataforma paralela:** GoReleaser compila de forma nativa los ejecutables (`cifratin`, `cifratin-grpc-client`, `cifratin-grpc-server`, `cifratin-http-client` y `cifratin-http-server`) para los siguientes destinos:
    - **Windows** (`amd64` y `arm64`) en formato comprimido `.zip`.
    - **Linux** (`amd64` y `arm64`) en formato comprimido `.tar.gz`.
    - **macOS** (`amd64` y `arm64` Apple Silicon) en formato comprimido `.tar.gz`.

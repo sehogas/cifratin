@@ -22,7 +22,7 @@ The project has been designed under the principles of simplicity and robustness,
   - **Single File**: Encrypt or decrypt an individual file by specifying its paths.
   - **Search Patterns (Wildcards)**: Allows using expressions like `*.pdf` or `tests/*.txt` to batch process multiple matching files.
   - **Directories (Recursive Processing)**: Traverses entire folder structures and processes each file individually, replicating the directory structure at the target destination.
-- **Integrated gRPC Service**: Includes a standalone gRPC server (`cmd/cifratin-server`) separate from the CLI to allow integration and execution of the AES encryption engine from remote clients or microservices.
+- **Integrated gRPC Service**: Includes a standalone gRPC server (`cmd/cifratin-grpc-server`) separate from the CLI to allow integration and execution of the AES encryption engine from remote clients or microservices.
 - **Smart Extension Handling**:
   - Automatically appends the `.enc` extension when encrypting files if they do not already have it.
   - Removes the `.enc` extension when decrypting if it is present in the source file name.
@@ -60,13 +60,13 @@ make build-client
 # Compile the gRPC server binary
 make build-server
 ```
-The resulting CLI binary will be saved in `bin/cifratin`, the client in `bin/cifratin-client`, and the server in `bin/cifratin-server` (or with `.exe` in Windows environments).
+The resulting CLI binary will be saved in `bin/cifratin`, the client in `bin/cifratin-grpc-client`, and the server in `bin/cifratin-grpc-server` (or with `.exe` in Windows environments).
 
 ### Using Go directly
 ```bash
 go build -o bin/cifratin ./cmd/cifratin
-go build -o bin/cifratin-client ./cmd/cifratin-client
-go build -o bin/cifratin-server ./cmd/cifratin-server
+go build -o bin/cifratin-grpc-client ./cmd/cifratin-grpc-client
+go build -o bin/cifratin-grpc-server ./cmd/cifratin-grpc-server
 ```
 
 If you want to clean up built files and test results:
@@ -93,7 +93,7 @@ bin/cifratin -mode=<encrypt|decrypt> -in=<source> -out=<destination>
 The gRPC client application replicates the same functionality as the local CLI but performs cryptographic tasks by calling the gRPC server remotely.
 
 ```bash
-bin/cifratin-client -mode=<encrypt|decrypt> -in=<source> -out=<destination> [additional flags]
+bin/cifratin-grpc-client -mode=<encrypt|decrypt> -in=<source> -out=<destination> [additional flags]
 ```
 
 #### Additional Flags for the gRPC Client:
@@ -140,10 +140,10 @@ Ensure the gRPC server is running (`make run-server`).
 
 ```bash
 # Encrypt an individual PDF file by sending it to the gRPC server
-bin/cifratin-client -mode=encrypt -in=test.pdf -out=test.pdf.enc
+bin/cifratin-grpc-client -mode=encrypt -in=test.pdf -out=test.pdf.enc
 
 # Decrypt the previously encrypted file via gRPC
-bin/cifratin-client -mode=decrypt -in=test.pdf.enc -out=test_restored_grpc.pdf
+bin/cifratin-grpc-client -mode=decrypt -in=test.pdf.enc -out=test_restored_grpc.pdf
 ```
 
 #### 3. Encrypt and Decrypt a Complete Directory (gRPC Client)
@@ -152,10 +152,10 @@ The directory mode in the gRPC client also preserves the internal recursive fold
 
 ```bash
 # Encrypt all contents of the 'tests' folder to 'encrypted_output_grpc'
-bin/cifratin-client -mode=encrypt -in=tests -out=encrypted_output_grpc
+bin/cifratin-grpc-client -mode=encrypt -in=tests -out=encrypted_output_grpc
 
 # Decrypt the encrypted content to 'restored_output_grpc'
-bin/cifratin-client -mode=decrypt -in=encrypted_output_grpc -out=restored_output_grpc
+bin/cifratin-grpc-client -mode=decrypt -in=encrypted_output_grpc -out=restored_output_grpc
 ```
 
 #### 4. Encrypt and Decrypt a Complete Directory (HTTP Client)

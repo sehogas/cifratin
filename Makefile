@@ -11,10 +11,10 @@
 BINARY_NAME=cifratin
 BUILD_DIR=bin
 CMD_PATH=./cmd/cifratin
-CLIENT_BINARY_NAME=cifratin-client
-CLIENT_CMD_PATH=./cmd/cifratin-client
-SERVER_BINARY_NAME=cifratin-server
-SERVER_CMD_PATH=./cmd/cifratin-server
+CLIENT_BINARY_NAME=cifratin-grpc-client
+CLIENT_CMD_PATH=./cmd/cifratin-grpc-client
+SERVER_BINARY_NAME=cifratin-grpc-server
+SERVER_CMD_PATH=./cmd/cifratin-grpc-server
 HTTP_SERVER_BINARY_NAME=cifratin-http-server
 HTTP_SERVER_CMD_PATH=./cmd/cifratin-http-server
 HTTP_CLIENT_BINARY_NAME=cifratin-http-client
