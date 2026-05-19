@@ -36,8 +36,8 @@ builds:
       - -s -w -X main.Version={{.Version}}
 
   - id: cifratin-server
-    binary: server
-    main: ./cmd/server
+    binary: cifratin-server
+    main: ./cmd/cifratin-server
     goos:
       - linux
       - windows

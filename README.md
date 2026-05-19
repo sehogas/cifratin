@@ -16,7 +16,7 @@ El proyecto ha sido diseñado bajo los principios de simplicidad y solidez, aseg
   - **Archivo Único**: Cifra o descifra un archivo individual especificando sus rutas.
   - **Patrones de Búsqueda (Wildcards)**: Permite utilizar expresiones como `*.pdf` o `tests/*.txt` para procesar múltiples archivos coincidentes en lote.
   - **Directorios (Procesamiento Recursivo)**: Recorre estructuras de carpetas completas y procesa cada archivo de forma individual, replicando la estructura de directorios en el destino correspondiente.
-- **Servicio gRPC Integrado**: Incluye un servidor gRPC (`cmd/server`) independiente del CLI para permitir la integración y ejecución del motor de cifrado AES desde clientes remotos o microservicios.
+- **Servicio gRPC Integrado**: Incluye un servidor gRPC (`cmd/cifratin-server`) independiente del CLI para permitir la integración y ejecución del motor de cifrado AES desde clientes remotos o microservicios.
 - **Manejo Inteligente de Extensiones**:
   - Agrega automáticamente la extensión `.enc` al cifrar archivos si no la poseen.
   - Remueve la extensión `.enc` al descifrar si se encuentra presente en el nombre del archivo origen.
@@ -53,13 +53,13 @@ make build-client
 # Compilar el servidor gRPC
 make build-server
 ```
-El binario CLI resultante se guardará en `bin/cifratin`, el cliente en `bin/cifratin-client` y el servidor en `bin/server` (o `.exe` en entornos Windows).
+El binario CLI resultante se guardará en `bin/cifratin`, el cliente en `bin/cifratin-client` y el servidor en `bin/cifratin-server` (o `.exe` en entornos Windows).
 
 ### Usando Go directamente
 ```bash
 go build -o bin/cifratin ./cmd/cifratin
 go build -o bin/cifratin-client ./cmd/cifratin-client
-go build -o bin/server ./cmd/server
+go build -o bin/cifratin-server ./cmd/cifratin-server
 ```
 
 Si desea limpiar los archivos compilados y los resultados de las pruebas:

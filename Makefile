@@ -13,6 +13,8 @@ BUILD_DIR=bin
 CMD_PATH=./cmd/cifratin
 CLIENT_BINARY_NAME=cifratin-client
 CLIENT_CMD_PATH=./cmd/cifratin-client
+SERVER_BINARY_NAME=cifratin-server
+SERVER_CMD_PATH=./cmd/cifratin-server
 VERSION_LDFLAGS=-ldflags "-s -w -X main.Version=local-dev"
 
 .PHONY: help build clean test test-coverage run-cifrar-archivo run-descifrar-archivo run-cifrar-carpeta run-descifrar-carpeta run-cifrar-patron help-app
@@ -49,9 +51,9 @@ build:
 	@echo "==> Compilacion exitosa. Binario disponible en $(BUILD_DIR)/$(BINARY_NAME)"
 
 build-server:
-	@echo "==> Compilando el binario del servidor gRPC..."
-	go build $(VERSION_LDFLAGS) -o $(BUILD_DIR)/server ./cmd/server
-	@echo "==> Compilacion exitosa. Binario disponible en $(BUILD_DIR)/server"
+	@echo "==> Compilando el binario del servidor gRPC $(SERVER_BINARY_NAME)..."
+	go build $(VERSION_LDFLAGS) -o $(BUILD_DIR)/$(SERVER_BINARY_NAME) $(SERVER_CMD_PATH)
+	@echo "==> Compilacion exitosa. Binario disponible en $(BUILD_DIR)/$(SERVER_BINARY_NAME)"
 
 build-client:
 	@echo "==> Compilando el binario Cliente gRPC $(CLIENT_BINARY_NAME)..."
@@ -118,4 +120,4 @@ help-app:
 
 run-server:
 	@echo "==> Levantando servidor gRPC..."
-	go run ./cmd/server
+	go run $(SERVER_CMD_PATH)

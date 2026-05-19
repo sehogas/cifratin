@@ -1,6 +1,6 @@
 # 📦 Guía de Lanzamiento y Versionamiento de Cifratin
 
-Este documento detalla el procedimiento técnico para definir versiones y publicar nuevos lanzamientos (releases) de los binarios ejecutables de Cifratin (`cifratin`, `cifratin-client` y `server`) en el repositorio.
+Este documento detalla el procedimiento técnico para definir versiones y publicar nuevos lanzamientos (releases) de los binarios ejecutables de Cifratin (`cifratin`, `cifratin-client` y `cifratin-server`) en el repositorio.
 
 ---
 
@@ -12,7 +12,7 @@ Para evitar mantener valores estáticos (hardcodeados) en el código Go que deba
 Cada punto de entrada de la aplicación define una variable global de paquete llamada `Version` inicializada por defecto con el valor `"dev"`:
 - `cmd/cifratin/main.go`
 - `cmd/cifratin-client/main.go`
-- `cmd/server/main.go`
+- `cmd/cifratin-server/main.go`
 
 ### 2. Inyección local (Desarrollo)
 Cuando se compila localmente de forma manual usando el `Makefile` (`make build`, `make build-client` o `make build-server`), se utiliza el flag `-X` para sobreescribir el valor de la variable en tiempo de enlace:
@@ -63,7 +63,7 @@ Una vez que GitHub recibe el tag que cumple con el patrón `v*`, se dispara auto
 
 ### ¿Qué hace el Pipeline automatizado?
 1. **Configura el entorno de construcción:** Levanta un ejecutor virtual Linux e instala el SDK de Go estable.
-2. **Construcción Multiplataforma paralela:** GoReleaser compila de forma nativa los tres ejecutables (`cifratin`, `cifratin-client` y `server`) para los siguientes destinos:
+2. **Construcción Multiplataforma paralela:** GoReleaser compila de forma nativa los tres ejecutables (`cifratin`, `cifratin-client` y `cifratin-server`) para los siguientes destinos:
    - **Windows** (`amd64` y `arm64`) en formato comprimido `.zip`.
    - **Linux** (`amd64` y `arm64`) en formato comprimido `.tar.gz`.
    - **macOS** (`amd64` y `arm64` Apple Silicon) en formato comprimido `.tar.gz`.
